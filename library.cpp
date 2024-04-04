@@ -237,6 +237,10 @@ void returnBook(Book books[], int bookSize, User users[], int userSize, BookHist
 
             if(fine > 0.0){
                 cout << "Usuário possui uma multa de R$ " << fine << " a pagar, por atraso." << endl;
+                Fine fine;
+                fine.user = users[bookId];
+                fine.rent = bookHistories[i];
+                fine.value = calculateFine(currentDate, bookHistories[i].returnDate);
             } else {
                 cout << "Você não tem multas pendentes." << endl;
             }
@@ -247,5 +251,20 @@ void returnBook(Book books[], int bookSize, User users[], int userSize, BookHist
 
     if(!found) {
         cout << "Não foi possível encontrar um registro de empréstimo correspondente para este livro e usuário." << endl;
+    }
+}
+
+User findBookPerUser(BookHistory bookHistories[], int historySize, string user){
+    cout << "Buscando por livro emprestado pelo usuário (" << user << ")..." << endl;
+    bool found = false;
+    for(int i=0; i<historySize; i++){
+        if(bookHistories[i].renter.name == user && bookHistories[i].returned == false){
+            return bookHistories[i].renter;
+            found = true;
+        }
+
+        if(!found){
+            throw runtime_error("Nenhum livro encontrado para este usuário.");
+        }
     }
 }

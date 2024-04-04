@@ -43,5 +43,6 @@ User findUser(User users[], int userSize);
 void loanBook(Book books[], int bookSize, User users[], int userSize, BookHistory bookHistories[], int historySize, time_t currentDate);
 float calculateFine(time_t currentDate, time_t returnDate);
 void returnBook(Book books[], int size, User users[], int userSize, BookHistory bookHistories[], int historySize, time_t currentDate);
+User findBookPerUser(BookHistory bookHistories[], int historySize, string user);
 
 #endif
