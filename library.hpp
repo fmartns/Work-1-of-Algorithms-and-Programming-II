@@ -70,16 +70,22 @@ float calculateFine(time_t currentDate, time_t returnDate);
 // Função para devolução do livro.
 void returnBook(Book books[], int size, User users[], int userSize, BookHistory bookHistories[], int historySize, time_t currentDate, Fine fines[], int fineSize);
 
+// Função para listar todos os emprestimos.
+void listBookHistory(BookHistory bookHistories[], int historySize);
+
 // Função para encontrar livro por usuário.
-void findBookPerUser(BookHistory bookHistories[], int historySize);
+void findBookPerUser(BookHistory bookHistories[], int historySize, User users[], int userSize);
 
 // Função para listar todas as multas.
 void listFines(Fine fines[], int fineSize);
 
 // Função para listar as multas por usuários
-void listFinesPerUser(Fine fines[], int fineSize);
+void listFinesPerUser(Fine fines[], int fineSize, User users[], int userSize);
 
 // Função para dar baixa em multas.
 void finesPayment(Fine fines[], int fineSize);
+
+// Estatisticas
+void statistics(BookHistory bookHistories[], int historySize);
 
 #endif

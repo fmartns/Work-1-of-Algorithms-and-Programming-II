@@ -4,15 +4,33 @@
 using namespace std;
 
 int main() {
-    const int MAX_BOOKS = 10;
-    const int MAX_USERS = 10;
-    const int MAX_HISTORY = 10;
-    const int MAX_FINE = 100;
+    const int MAX_BOOKS = 1000;
+    const int MAX_USERS = 1000;
+    const int MAX_HISTORY = 1000;
+    const int MAX_FINE = 1000;
 
     Book books[MAX_BOOKS];
     User users[MAX_USERS];
     Fine fines[MAX_FINE];
     BookHistory bookHistories[MAX_HISTORY];
+    
+    // Livros com IDs fixos
+    books[0] = {1, "A Chave de Vidro", "Raymond Chandler", 1942, 1};
+    books[1] = {2, "O Senhor dos Anéis", "J.R.R. Tolkien", 1954, 8};
+    books[2] = {3, "Cem Anos de Solidão", "Gabriel García Márquez", 1967, 3};
+    books[3] = {4, "Orgulho e Preconceito", "Jane Austen", 1813, 10};
+    books[4] = {5, "O Grande Gatsby", "F. Scott Fitzgerald", 1925, 6};
+    books[5] = {6, "1984", "George Orwell", 1949, 7};
+    books[6] = {7, "Crime e Castigo", "Fyodor Dostoevsky", 1866, 4};
+
+    // Usuários com IDs fixos
+    users[0] = {1, "Alice"};
+    users[1] = {2, "Bob"};
+    users[2] = {3, "Charlie"};
+    users[3] = {4, "David"};
+    users[4] = {5, "Eva"};
+    users[5] = {6, "Frank"};
+    users[6] = {7, "Grace"};
 
     // Inicialize todas as estruturas de dados
 
@@ -25,7 +43,8 @@ int main() {
         cout << "(2) Usuários" << endl;
         cout << "(3) Emprestimos" << endl;
         cout << "(4) Multas" << endl;
-        cout << "(5) Sair" << endl;
+        cout << "(5) Estatisticas" << endl;
+        cout << "(6) Sair" << endl;
         cout << "Digite o número correspondente a opção: ";
         int choice;
         cin >> choice;
@@ -59,6 +78,7 @@ int main() {
                         cout << "(3) Ano" << endl;
                         cout << "(4) Retornar ao menu anterior" << endl;
                         cout << "Digite o número correspondente a opção: ";
+                        cin >> choice;
                         switch(choice){
                             case 1:
                                 findBookTitle(books, MAX_BOOKS);
@@ -99,10 +119,10 @@ int main() {
                         listUsers(users, MAX_USERS);
                         break;
                     case 3:
-                        findBookPerUser(bookHistories, MAX_HISTORY);
+                        findBookPerUser(bookHistories, MAX_HISTORY, users, MAX_USERS);
                         break;
                     case 4:
-                        listFinesPerUser(fines, MAX_FINE);
+                        listFinesPerUser(fines, MAX_FINE, users, MAX_USERS);
                         break;
                     case 5:
                         break;
@@ -117,7 +137,8 @@ int main() {
                 cout << "Selecione uma opção:" << endl;
                 cout << "(1) Emprestimo" << endl;
                 cout << "(2) Devolução" << endl;
-                cout << "(3) Retornar ao menu anterior" << endl;
+                cout << "(3) Listar emprestimos" << endl;
+                cout << "(4) Retornar ao menu anterior" << endl;
                 cout << "Digite o número correspondente a opção: ";
                 cin >> choice;
                 switch (choice) {
@@ -128,6 +149,9 @@ int main() {
                         returnBook(books, MAX_BOOKS, users, MAX_USERS, bookHistories, MAX_HISTORY, time(nullptr), fines, MAX_FINE);
                         break;
                     case 3:
+                        listBookHistory(bookHistories, MAX_HISTORY);
+                        break;
+                    case 4:
                         break;
                     default:
                         cout << "Opção inválida. Por favor, tente novamente." << endl;
@@ -157,6 +181,9 @@ int main() {
                 }
                 break;
             case 5:
+                statistics(bookHistories, MAX_HISTORY);
+                break;
+            case 6:
                 cout << "Programa finalizado com sucesso." << endl;
                 return 0;
             default:

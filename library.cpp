@@ -6,11 +6,9 @@
 using namespace std;
 
 // Função de retorno ao menu, a fim de permitir que o usuário tenha um tempo de leitura.
-
 void menuReturn(){
     char menu;
-    bool left = false;
-    while(!left){
+    while(true){
         cout << "Digite 'Y' para voltar ao menu: ";
         cin >> menu;
         if(menu == 'y' || menu == 'Y') {
@@ -20,17 +18,14 @@ void menuReturn(){
 }
 
 // Função para converter tempo de segundo para String
-
 void printDate(time_t dateInSeconds) {
     struct tm * timeinfo;
     timeinfo = localtime(&dateInSeconds);
-    cout << "Data: " << asctime(timeinfo);
+    cout << asctime(timeinfo);
 }
 
 // Função para registro de livro.
-
 void registerBooks(Book books[], int bookSize){
-
     cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
     cout << "      ADICIONAR LIVRO" << endl;
     cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
@@ -40,10 +35,27 @@ void registerBooks(Book books[], int bookSize){
 
     cout << "Código de Identificação: ";
     cin >> id;
+    
+    bool idInUse;
+    do {
+        idInUse = false;
+        for(int i = 0; i < bookSize; i++){
+            if(books[i].id == id){
+                idInUse = true;
+                cout << "Código de identificação em uso." << endl;
+                cout << "Escolha outro código: ";
+                cin >> id;
+                break;
+            }
+        }
+    } while (idInUse);
+
     cout << "Titulo: ";
-    cin >> title;
+    cin.ignore();
+    getline(cin, title);
     cout << "Autor: ";
-    cin >> author;
+    cin.ignore();
+    getline(cin, author);
     cout << "Ano de Lançamento: ";
     cin >> year;
     cout << "Unidades disponiveis: ";
@@ -56,7 +68,6 @@ void registerBooks(Book books[], int bookSize){
     book.available = available;
     cout << "Livro cadastrado com sucesso." << endl;
 
-    // Encontrar a primeira posição livre no array
     for(int i = 0; i < bookSize; i++){
         if(books[i].title.empty()){
             books[i] = book;
@@ -68,7 +79,6 @@ void registerBooks(Book books[], int bookSize){
 }
 
 // Função para listagem de livros.
-
 void listBooks(Book books[], int bookSize){
     cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
     cout << "       CATALOGO DE LIVROS" << endl;
@@ -84,7 +94,7 @@ void listBooks(Book books[], int bookSize){
             if(books[i].available > 0){
                 cout << books[i].available << endl;
             } else {
-                cout << "Indisponivel";
+                cout << "Indisponivel" << endl;
             }
             cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
         }
@@ -94,12 +104,12 @@ void listBooks(Book books[], int bookSize){
 }
 
 // Função para buscar livros por titulo.
-
 void findBookTitle(Book books[], int bookSize) {
     string title;
     cout << "Digite o titulo: ";
-    cin >> title;
-    cout << "Buscando por livro com o título (" << title << ")..." << endl;
+    cin.ignore();
+    getline(cin, title);
+    cout << "Buscando por livros com o título " << title << "..." << endl;
     bool found = false;
     for(int i = 0; i<bookSize; i++) {
         if(books[i].title == title) {
@@ -109,7 +119,7 @@ void findBookTitle(Book books[], int bookSize) {
             cout << "Titulo: " << books[i].title << endl;
             cout << "Autor: " << books[i].author << endl;
             cout << "Ano de Lançamento: " << books[i].year << endl;
-            cout << "Unidades disponiveis: " << endl;
+            cout << "Unidades disponiveis: ";
             if(books[i].available > 0){
                 cout << books[i].available << endl;
             } else {
@@ -119,19 +129,19 @@ void findBookTitle(Book books[], int bookSize) {
     }
 
     if(!found){
-        cout << "Sem resultados para sua busca.";
+        cout << "Sem resultados para sua busca." << endl;
     }
 
     menuReturn();
 };
 
 // Função para buscar livros por autor.
-
 void findBookAuthor(Book books[], int bookSize) {
     string author;
     cout << "Digite o nome do autor: ";
-    cin >> author;
-    cout << "Buscando por livro com o autor (" << author << ")..." << endl;
+    cin.ignore();
+    getline(cin, author);
+    cout << "Buscando por livros do autor " << author << "..." << endl;
     bool found = false;
     for(int i = 0; i<bookSize; i++) {
         if(books[i].author == author) {
@@ -141,7 +151,7 @@ void findBookAuthor(Book books[], int bookSize) {
             cout << "Titulo: " << books[i].title << endl;
             cout << "Autor: " << books[i].author << endl;
             cout << "Ano de Lançamento: " << books[i].year << endl;
-            cout << "Unidades disponiveis: " << endl;
+            cout << "Unidades disponiveis: ";
             if(books[i].available > 0){
                 cout << books[i].available << endl;
             } else {
@@ -151,19 +161,18 @@ void findBookAuthor(Book books[], int bookSize) {
     }
 
     if(!found){
-        cout << "Sem resultados para sua busca.";
+        cout << "Sem resultados para sua busca." << endl;
     }
 
     menuReturn();
 };
 
 // Função para buscar livros por ano.
-
 void findBookYear(Book books[], int bookSize){
     int year;
     cout << "Digite o ano de lançamento: ";
     cin >> year;
-    cout << "Buscando por livro lançados do ano (" << year << ")..." << endl;
+    cout << "Buscando por livros lançados no ano " << year << "..." << endl;
     bool found = false;
     for(int i = 0; i<bookSize; i++) {
         if(books[i].year == year) {
@@ -173,7 +182,7 @@ void findBookYear(Book books[], int bookSize){
             cout << "Titulo: " << books[i].title << endl;
             cout << "Autor: " << books[i].author << endl;
             cout << "Ano de Lançamento: " << books[i].year << endl;
-            cout << "Unidades disponiveis: " << endl;
+            cout << "Unidades disponiveis: ";
             if(books[i].available > 0){
                 cout << books[i].available << endl;
             } else {
@@ -183,14 +192,13 @@ void findBookYear(Book books[], int bookSize){
     }
 
     if(!found){
-        cout << "Sem resultados para sua busca.";
+        cout << "Sem resultados para sua busca." << endl;
     }
 
     menuReturn();
 };
 
 // Função para registro de usuários.
-
 void registerUser(User users[], int userSize){
 
     cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
@@ -202,8 +210,41 @@ void registerUser(User users[], int userSize){
 
     cout << "Matricula: ";
     cin >> id;
+    
+    bool idInUse;
+    
+    do {
+        idInUse = false;
+        for(int i=0; i < userSize; i++){
+            if(users[i].id == id){
+                idInUse = true;
+                cout << "Código de identificação em uso." << endl;
+                cout << "Escolha outro código: ";
+                cin >> id;
+                break;
+            }
+        }
+    } while (idInUse);
+    
     cout << "Nome: ";
-    cin >> name;
+    cin.ignore();
+    getline(cin, name);
+    
+    bool nameInUse;
+    
+    do {
+        nameInUse = false;
+        for(int i=0; i <userSize; i++){
+            if(users[i].name == name){
+                nameInUse = true;
+                cout << "Nome de usuário em uso." << endl;
+                cout << "Escolha outro nome de usuário: ";
+                cin >> name;
+                break;
+            }
+        }
+    } while(nameInUse);
+    
     User user;
     user.id = id;
     user.name = name;
@@ -215,10 +256,11 @@ void registerUser(User users[], int userSize){
             break;
         }
     }
+    
+    menuReturn();
 }
 
 // Função para listar todos os usuários.
-
 void listUsers(User users[], int userSize){
     cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
     cout << "      LISTAGEM DE USUÁRIOS" << endl;
@@ -231,10 +273,11 @@ void listUsers(User users[], int userSize){
             cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
         }
     }
+    
+    menuReturn();
 }
 
 // Função para emprestimo de livros.
-
 void loanBook(Book books[], int bookSize, User users[], int userSize, BookHistory bookHistories[], int historySize, time_t currentDate){
     cout << "Emprestimo de Livro" << endl;
     int bookId, userId;
@@ -273,39 +316,44 @@ void loanBook(Book books[], int bookSize, User users[], int userSize, BookHistor
         cout << "Usuário não encontrado." << endl;
         return;
     }
-
-    // Atualizar unidades disponiveis
-    books[bookPosition].available = books[bookPosition].available - 1;
-
-    time_t returnDate;
-    cout << "Digite a data de retorno prevista (DD MM AAAA): ";
-    int day, month, year;
-    cin >> day >> month >> year;
-
-    tm dueDate = {0};
-    dueDate.tm_year = year - 1900;
-    dueDate.tm_mon = month - 1;
-    dueDate.tm_mday = day;
-    returnDate = mktime(&dueDate);
-
-    for (int i = 0; i < historySize; i++) {
-        if (bookHistories[i].book.title.empty()) {
-            bookHistories[i].book = books[bookPosition];
-            bookHistories[i].renter = users[userPosition];
-            bookHistories[i].loanDate = currentDate;
-            bookHistories[i].returnDate = returnDate;
-            bookHistories[i].returned = false;
-            break;
+    
+    if(books[bookPosition].available > 0){
+        
+        // Atualizar unidades disponiveis
+        books[bookPosition].available = books[bookPosition].available - 1;
+    
+        time_t returnDate;
+        cout << "Digite a data de retorno prevista (DD MM AAAA): ";
+        int day, month, year;
+        cin >> day >> month >> year;
+    
+        tm dueDate = {0};
+        dueDate.tm_year = year - 1900;
+        dueDate.tm_mon = month - 1;
+        dueDate.tm_mday = day;
+        returnDate = mktime(&dueDate);
+    
+        for (int i = 0; i < historySize; i++) {
+            if (bookHistories[i].book.title.empty()) {
+                bookHistories[i].book = books[bookPosition];
+                bookHistories[i].renter = users[userPosition];
+                bookHistories[i].loanDate = currentDate;
+                bookHistories[i].returnDate = returnDate;
+                bookHistories[i].returned = false;
+                break;
+            }
         }
+    
+        cout << "Livro emprestado com sucesso para o usuário " << users[userPosition].name << endl;
+        
+    } else {
+        cout << "Todas os exemplares deste livro estão locados no momento." << endl;
     }
-
-    cout << "Livro emprestado com sucesso para o usuário " << users[userPosition].name << endl;
-
+    
     menuReturn();
 }
 
 // Função para calcular multa.
-
 float calculateFine(time_t currentDate, time_t returnDate) {
 
     const int secondsInDay = 60 * 60 * 24;
@@ -321,7 +369,6 @@ float calculateFine(time_t currentDate, time_t returnDate) {
 }
 
 // Função para devolução do livro.
-
 void returnBook(Book books[], int bookSize, User users[], int userSize, BookHistory bookHistories[], int historySize, time_t currentDate, Fine fines[], int fineSize){
     int bookId, userId;
     cout << "Informe o código de identificação do livro: ";
@@ -354,7 +401,18 @@ void returnBook(Book books[], int bookSize, User users[], int userSize, BookHist
             float fine = calculateFine(currentDate, bookHistories[i].returnDate);
 
             if(fine > 0.0){
+
                 cout << "Gerada uma multa de R$ " << fine << " a pagar, por atraso." << endl;
+
+                int fineId = 0;
+                for(int k=0; k<fineSize; k++){
+                    if(fines[k].user.name.empty()){
+                        fineId = k+1;
+                        break;
+                    }
+                }
+
+                fines[i].id = fineId;
                 fines[i].user = users[userPosition]; // Corrigir a atribuição de usuário
                 fines[i].rent = bookHistories[i];
                 fines[i].value = fine; // Corrigir a atribuição do valor da multa
@@ -374,25 +432,67 @@ void returnBook(Book books[], int bookSize, User users[], int userSize, BookHist
     menuReturn();
 }
 
-// Função para encontrar livro por usuário.
+// Função para listar todos os emprestimos.
+void listBookHistory(BookHistory bookHistories[], int historySize){
+    cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+    cout << "    HISTORICO DE EMPRESTIMOS" << endl;
+    cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+    for(int i=0; i<historySize; i++){
+        if(!bookHistories[i].book.title.empty()){
+            cout << "Livro: " << bookHistories[i].book.title << endl;
+            cout << "Usuário: " << bookHistories[i].renter.name << endl;
+            cout << "Data de Emprestimo: ";
+            printDate(bookHistories[i].loanDate);
+            cout << "Prazo para Devolução: "; 
+            printDate(bookHistories[i].returnDate);
+            if(bookHistories[i].returned){
+                cout << "Data de Devolução: ";
+                printDate(bookHistories[i].devolutionDate);   
+            }
+            cout << "Status: ";
+            if(bookHistories[i].returned){
+                cout << "Devolvido" << endl;
+            } else {
+                cout << "Em posse do usuário" << endl;
+            }
+            cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+        }
+    }
+    
+    menuReturn();
+}
 
-void findBookPerUser(BookHistory bookHistories[], int historySize){
+// Função para encontrar livro por usuário.
+void findBookPerUser(BookHistory bookHistories[], int historySize, User users[], int userSize){
     string user;
     cout << "Digite o nome de usuário: ";
     cin >> user;
-    cout << "Livros atualmente emprestados para o usuário " << user << ":" << endl;
-    bool found = false;
-    for(int i=0; i<historySize; i++){
-        if(bookHistories[i].renter.name == user && bookHistories[i].returned == false){
-            found = true;
-            cout << "Livro: " << bookHistories[i].book.title << " (" << bookHistories[i].book.id << ")" << endl;
-            cout << "Data de devolução: ";
-            printDate(bookHistories[i].returnDate);
-            cout << endl;
+    bool foundBook = false;
+    bool foundUser = false;
+    
+    for(int i=0; i<userSize; i++){
+        if(users[i].name == user){
+            foundUser = true;
         }
+    }
+    
+    if(!foundUser){
+        cout << "Usuário não encontrado." << endl;
+    } else {
+        cout << "Livros atualmente emprestados para o usuário " << user << ":" << endl;
+        for(int i=0; i<historySize; i++){
+            if(bookHistories[i].renter.name == user && bookHistories[i].returned == false){
+                foundBook = true;
+                cout << "Livro: " << bookHistories[i].book.title << " (" << bookHistories[i].book.id << ")" << endl;
+                cout << "Data de devolução: ";
+                printDate(bookHistories[i].returnDate);
+                cout << endl;
+            }
 
-        if(!found){
-            cout << "Não há livros em posse do usuário.";
+            if(!foundBook){
+                cout << "Não há livros em posse do usuário." << endl;
+                break;
+            }
         }
     }
 
@@ -400,7 +500,6 @@ void findBookPerUser(BookHistory bookHistories[], int historySize){
 }
 
 // Função para listar todas as multas.
-
 void listFines(Fine fines[], int fineSize){
     cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
     cout << "      LISTAGEM DE MULTAS" << endl;
@@ -425,41 +524,53 @@ void listFines(Fine fines[], int fineSize){
 }
 
 // Função para listar as multas por usuários
-
-void listFinesPerUser(Fine fines[], int fineSize){
+void listFinesPerUser(Fine fines[], int fineSize, User users[], int userSize){
     string user;
     cout << "Digite o nome de usuário: ";
     cin >> user;
-    cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
-    cout << "      MULTAS DE " << user << endl;
-    cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
-    bool found = false;
-    for(int i=0; i <fineSize; i++){
-        if(fines[i].user.name == user && !fines[i].user.name.empty()){
-            found = true;
-            cout << "Id. da Multa: " << fines[i].id << endl;
-            cout << "Fator gerador: " << fines[i].rent.book.title << endl;
-            cout << "Valor: R$" << fines[i].value << endl;
-            cout << "Status: ";
-            if(fines[i].paid){
-                cout << "Pago" << endl;
-            } else {
-                cout << "Em aberto" << endl;
-            }
+    bool foundUser = false;
+    
+    for(int i=0; i<userSize; i++){
+        if(users[i].name == user){
+            foundUser = true;
+            break;
+        }
+    }
+    
+    if(!foundUser){
+        cout << "Usuário não encontrado." << endl;
+    } else {
             cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
-        }
-
-        if(!found){
-            cout << "Usuário não possui multas.";
-        }
-
+            cout << "      MULTAS DE " << user << endl;
+            cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+            bool found = false;
+            for(int i=0; i <fineSize; i++){
+                if(fines[i].user.name == user && !fines[i].user.name.empty()){
+                    found = true;
+                    cout << "Id. da Multa: " << fines[i].id << endl;
+                    cout << "Fator gerador: " << fines[i].rent.book.title << endl;
+                    cout << "Valor: R$" << fines[i].value << endl;
+                    cout << "Status: ";
+                    if(fines[i].paid){
+                        cout << "Pago" << endl;
+                    } else {
+                        cout << "Em aberto" << endl;
+                    }
+                    cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+                }
+        
+                if(!found){
+                    cout << "Usuário não possui multas.";
+                    break;
+                }
+        
+            }   
     }
 
     menuReturn();
 }
 
 // Função para dar baixa em multas.
-
 void finesPayment(Fine fines[], int fineSize){
     int id;
     cout << "Digite o id da multa: ";
@@ -478,5 +589,23 @@ void finesPayment(Fine fines[], int fineSize){
         cout << "Multa não encontrada, ou já foi paga." << endl;
     }
 
+    menuReturn();
+}
+
+// Estatisticas
+void statistics(BookHistory bookHistories[], int historySize){
+    int loans = 0;
+    
+    for(int i=0; i<historySize; i++){
+        if(!bookHistories[i].book.title.empty()){
+            loans = loans + 1;
+        }
+    }
+    
+    cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+    cout << "          ESTATISTICAS" << endl;
+    cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+    cout << "Emprestimos realizados: " << loans << endl;
+    
     menuReturn();
 }
