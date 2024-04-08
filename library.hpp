@@ -8,7 +8,7 @@ struct Book {
     int id;
     string title;
     string author;
-    int year;
+    string year;
     int available;
 };
 
@@ -46,14 +46,8 @@ void registerBooks(Book books[], int bookSize);
 // Função para listagem de livros.
 void listBooks(Book books[], int bookSize);
 
-// Função para buscar livros por titulo.
-void findBookTitle(Book books[], int bookSize);
-
-// Função para buscar livros por autor.
-void findBookAuthor(Book books[], int bookSize);
-
-// Função para buscar livros por ano.
-void findBookYear(Book books[], int bookSize);
+// Função para buscar livros por titulo, autor e ano.
+void findBooks(Book books[], int bookSize, int choice, string word);
 
 // Função para registro de usuários.
 void registerUser(User users[], int userSize);

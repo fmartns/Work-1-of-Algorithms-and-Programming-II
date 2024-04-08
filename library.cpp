@@ -2,6 +2,9 @@
 #include "library.hpp"
 #include <string>
 #include <time.h>
+#include <vector>
+#include <algorithm>
+#include <limits> // Adicione esta linha para usar numeric_limits
 
 using namespace std;
 
@@ -30,40 +33,47 @@ void registerBooks(Book books[], int bookSize){
     cout << "      ADICIONAR LIVRO" << endl;
     cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
 
-    int id, year, available;
-    string title, author;
+    int id, available;
+    string title, author, year;
+
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
     cout << "Titulo: ";
-    cin.ignore();
     getline(cin, title);
+
     cout << "Autor: ";
-    cin.ignore();
     getline(cin, author);
+
     cout << "Ano de Lançamento: ";
     cin >> year;
+    
+
     cout << "Unidades disponiveis: ";
     cin >> available;
-    Book book;
+
+
+    // Encontrar um ID disponível
     for(int i=0; i<bookSize; i++){
-        if(!books[i].title.empty()){
-            id = i + 2;
+        if(books[i].title.empty()){
+            id = i + 1; // ID começa de 1
+            break;
         }
     }
+
+    // Criar e adicionar o livro
+    Book book;
     book.id = id;
     book.title = title;
     book.author = author;
     book.year = year;
     book.available = available;
-    cout << "Livro cadastrado com sucesso.\nCódigo de identificação do livro: " << id << endl;
+    books[id - 1] = book; // Ajuste do índice
 
-    for(int i = 0; i < bookSize; i++){
-        if(books[i].title.empty()){
-            books[i] = book;
-            break;
-        }
-    }
+    cout << "Livro cadastrado com sucesso.\nCódigo de identificação do livro: " << id << endl;
 
     menuReturn();
 }
+
 
 // Função para listagem de livros.
 void listBooks(Book books[], int bookSize){
@@ -71,7 +81,7 @@ void listBooks(Book books[], int bookSize){
     cout << "       CATALOGO DE LIVROS" << endl;
     cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
     for(int i = 0; i < bookSize; i++){
-        if (!books[i].title.empty() && !books[i].author.empty() && books[i].year != 0) {
+        if (!books[i].title.empty() && !books[i].author.empty() && !books[i].year.empty()) {
             cout << "Informações do Livro (" << books[i].id << ")" << endl;
             cout << "Titulo: " << books[i].title << endl;
             cout << "Autor: " << books[i].author << endl;
@@ -89,98 +99,60 @@ void listBooks(Book books[], int bookSize){
     menuReturn();
 }
 
-// Função para buscar livros por titulo.
-void findBookTitle(Book books[], int bookSize) {
-    string title;
-    cout << "Digite o titulo: ";
-    cin.ignore();
-    getline(cin, title);
-    cout << "Buscando por livros com o título " << title << "..." << endl;
-    bool found = false;
-    for(int i = 0; i<bookSize; i++) {
-        if(books[i].title == title) {
-            found = true;
-            cout << "Informações do Livro (" << i+1 << ")" << endl;
-            cout << "Id: " << books[i].id << endl;
-            cout << "Titulo: " << books[i].title << endl;
-            cout << "Autor: " << books[i].author << endl;
-            cout << "Ano de Lançamento: " << books[i].year << endl;
-            cout << "Unidades disponiveis: ";
-            if(books[i].available > 0){
-                cout << books[i].available << endl;
-            } else {
-                cout << "Indisponivel" << endl;
+void findBooks(Book books[], int bookSize, int choice, string word){
+    vector<Book> results;
+
+    transform(word.begin(), word.end(), word.begin(), ::tolower);
+
+    if(choice == 1){
+        for(int i=0; i<bookSize; i++){
+            string titleLower = books[i].title;
+            transform(titleLower.begin(), titleLower.end(), titleLower.begin(), ::tolower);
+
+            if(titleLower.find(word) != string::npos){
+                results.push_back(books[i]);
+            }
+        }
+    } else if (choice == 2) {
+        for(int i=0; i<bookSize; i++){
+            string authorLower = books[i].author;
+            transform(authorLower.begin(), authorLower.end(), authorLower.begin(), ::tolower);
+
+            if(authorLower.find(word) != string::npos){
+                results.push_back(books[i]);
+            }
+        }
+    } else if (choice == 3) {
+        for(int i=0; i<bookSize; i++){
+            string yearLower = books[i].year;
+            transform(yearLower.begin(), yearLower.end(), yearLower.begin(), ::tolower);
+
+            if(yearLower.find(word) != string::npos){
+                results.push_back(books[i]);
             }
         }
     }
 
-    if(!found){
-        cout << "Sem resultados para sua busca." << endl;
-    }
-
-    menuReturn();
-};
-
-// Função para buscar livros por autor.
-void findBookAuthor(Book books[], int bookSize) {
-    string author;
-    cout << "Digite o nome do autor: ";
-    cin.ignore();
-    getline(cin, author);
-    cout << "Buscando por livros do autor " << author << "..." << endl;
-    bool found = false;
-    for(int i = 0; i<bookSize; i++) {
-        if(books[i].author == author) {
-            found = true;
-            cout << "Informações do Livro (" << books[i].id << ")" << endl;
-            cout << "Titulo: " << books[i].title << endl;
-            cout << "Autor: " << books[i].author << endl;
-            cout << "Ano de Lançamento: " << books[i].year << endl;
+    if(results.empty()) {
+        cout << "Nenhum resultado encontrado." << endl;
+    } else {
+        cout << "Livros encontrados: " << endl;
+        for(const auto& book : results){
+            cout << "Titulo: " << book.title << " (" << book.id << ")" << endl;
+            cout << "Autor: " << book.author << endl;
+            cout << "Ano de Lançamento: " << book.year << endl;
             cout << "Unidades disponiveis: ";
-            if(books[i].available > 0){
-                cout << books[i].available << endl;
+            if(book.available > 0){
+                cout << book.available << endl;
             } else {
                 cout << "Indisponivel" << endl;
             }
+            cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
         }
     }
-
-    if(!found){
-        cout << "Sem resultados para sua busca." << endl;
-    }
-
+    
     menuReturn();
-};
-
-// Função para buscar livros por ano.
-void findBookYear(Book books[], int bookSize){
-    int year;
-    cout << "Digite o ano de lançamento: ";
-    cin >> year;
-    cout << "Buscando por livros lançados no ano " << year << "..." << endl;
-    bool found = false;
-    for(int i = 0; i<bookSize; i++) {
-        if(books[i].year == year) {
-            found = true;
-            cout << "Informações do Livro (" << books[i].id << ")" << endl;
-            cout << "Titulo: " << books[i].title << endl;
-            cout << "Autor: " << books[i].author << endl;
-            cout << "Ano de Lançamento: " << books[i].year << endl;
-            cout << "Unidades disponiveis: ";
-            if(books[i].available > 0){
-                cout << books[i].available << endl;
-            } else {
-                cout << "Indisponivel" << endl;
-            }
-        }
-    }
-
-    if(!found){
-        cout << "Sem resultados para sua busca." << endl;
-    }
-
-    menuReturn();
-};
+}
 
 // Função para registro de usuários.
 void registerUser(User users[], int userSize){
