@@ -4,6 +4,7 @@
 #include <time.h>
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
 #include <limits> // Adicione esta linha para usar numeric_limits
 
 using namespace std;
@@ -543,9 +544,16 @@ void finesPayment(Fine fines[], int fineSize){
 void statistics(BookHistory bookHistories[], int historySize){
     int loans = 0;
     
-    for(int i=0; i<historySize; i++){
-        if(!bookHistories[i].book.title.empty()){
-            loans = loans + 1;
+    // Contadores para usuários e livros
+    unordered_map<string, int> userCount;
+    unordered_map<string, int> bookCount;
+    
+    // Contar ocorrências de usuários e livros
+    for(int i = 0; i < historySize; ++i) {
+        if(!bookHistories[i].book.title.empty()) {
+            loans++;
+            userCount[bookHistories[i].renter.name]++;
+            bookCount[bookHistories[i].book.title]++;
         }
     }
     
@@ -554,5 +562,32 @@ void statistics(BookHistory bookHistories[], int historySize){
     cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
     cout << "Emprestimos realizados: " << loans << endl;
     
+    // Função lambda para ordenar mapas por valor
+    auto sortByValueDesc = [](const unordered_map<string, int>& map) {
+        vector<pair<string, int>> pairs;
+        for (const auto& pair : map) {
+            pairs.push_back(pair);
+        }
+        sort(pairs.begin(), pairs.end(), [](const pair<string, int>& a, const pair<string, int>& b) {
+            return a.second > b.second;
+        });
+        return pairs;
+    };
+    
+    // Obter top 3 usuários
+    vector<pair<string, int>> topUsers = sortByValueDesc(userCount);
+    cout << "Top 3 usuários mais frequentes:" << endl;
+    for (int i = 0; i < min(3, static_cast<int>(topUsers.size())); ++i) {
+        cout << topUsers[i].first << ": " << topUsers[i].second << " empréstimos" << endl;
+    }
+    
+    // Obter top 3 livros
+    vector<pair<string, int>> topBooks = sortByValueDesc(bookCount);
+    cout << "Top 3 livros mais emprestados:" << endl;
+    for (int i = 0; i < min(3, static_cast<int>(topBooks.size())); ++i) {
+        cout << topBooks[i].first << ": " << topBooks[i].second << " empréstimos" << endl;
+    }
+    
+    cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
     menuReturn();
 }
