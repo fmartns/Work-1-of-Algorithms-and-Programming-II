@@ -32,24 +32,6 @@ void registerBooks(Book books[], int bookSize){
 
     int id, year, available;
     string title, author;
-
-    cout << "Código de Identificação: ";
-    cin >> id;
-    
-    bool idInUse;
-    do {
-        idInUse = false;
-        for(int i = 0; i < bookSize; i++){
-            if(books[i].id == id){
-                idInUse = true;
-                cout << "Código de identificação em uso." << endl;
-                cout << "Escolha outro código: ";
-                cin >> id;
-                break;
-            }
-        }
-    } while (idInUse);
-
     cout << "Titulo: ";
     cin.ignore();
     getline(cin, title);
@@ -61,12 +43,17 @@ void registerBooks(Book books[], int bookSize){
     cout << "Unidades disponiveis: ";
     cin >> available;
     Book book;
+    for(int i=0; i<bookSize; i++){
+        if(!books[i].title.empty()){
+            id = i + 2;
+        }
+    }
     book.id = id;
     book.title = title;
     book.author = author;
     book.year = year;
     book.available = available;
-    cout << "Livro cadastrado com sucesso." << endl;
+    cout << "Livro cadastrado com sucesso.\nCódigo de identificação do livro: " << id << endl;
 
     for(int i = 0; i < bookSize; i++){
         if(books[i].title.empty()){
@@ -85,8 +72,7 @@ void listBooks(Book books[], int bookSize){
     cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
     for(int i = 0; i < bookSize; i++){
         if (!books[i].title.empty() && !books[i].author.empty() && books[i].year != 0) {
-            cout << "Informações do Livro (" << i+1 << ")" << endl;
-            cout << "Id: " << books[i].id << endl;
+            cout << "Informações do Livro (" << books[i].id << ")" << endl;
             cout << "Titulo: " << books[i].title << endl;
             cout << "Autor: " << books[i].author << endl;
             cout << "Ano de Lançamento: " << books[i].year << endl;
@@ -146,8 +132,7 @@ void findBookAuthor(Book books[], int bookSize) {
     for(int i = 0; i<bookSize; i++) {
         if(books[i].author == author) {
             found = true;
-            cout << "Informações do Livro (" << i+1 << ")" << endl;
-            cout << "Id: " << books[i].id << endl;
+            cout << "Informações do Livro (" << books[i].id << ")" << endl;
             cout << "Titulo: " << books[i].title << endl;
             cout << "Autor: " << books[i].author << endl;
             cout << "Ano de Lançamento: " << books[i].year << endl;
@@ -177,8 +162,7 @@ void findBookYear(Book books[], int bookSize){
     for(int i = 0; i<bookSize; i++) {
         if(books[i].year == year) {
             found = true;
-            cout << "Informações do Livro (" << i+1 << ")" << endl;
-            cout << "Id: " << books[i].id << endl;
+            cout << "Informações do Livro (" << books[i].id << ")" << endl;
             cout << "Titulo: " << books[i].title << endl;
             cout << "Autor: " << books[i].author << endl;
             cout << "Ano de Lançamento: " << books[i].year << endl;
@@ -207,24 +191,6 @@ void registerUser(User users[], int userSize){
 
     int id;
     string name;
-
-    cout << "Matricula: ";
-    cin >> id;
-    
-    bool idInUse;
-    
-    do {
-        idInUse = false;
-        for(int i=0; i < userSize; i++){
-            if(users[i].id == id){
-                idInUse = true;
-                cout << "Código de identificação em uso." << endl;
-                cout << "Escolha outro código: ";
-                cin >> id;
-                break;
-            }
-        }
-    } while (idInUse);
     
     cout << "Nome: ";
     cin.ignore();
@@ -246,16 +212,24 @@ void registerUser(User users[], int userSize){
     } while(nameInUse);
     
     User user;
+    
+    for(int i=0; i<userSize; i++){
+        if(!users[i].name.empty()){
+            id = i + 2;
+        }
+    }
+    
     user.id = id;
     user.name = name;
 
-    // Encontrar a primeira posição livre no array
     for(int i = 0; i < userSize; i++){
         if(users[i].name.empty()){
             users[i] = user;
             break;
         }
     }
+
+    cout << "Usuário cadastrado com sucesso.\nCódigo de identificação do usuário: " << id << endl;
     
     menuReturn();
 }
@@ -354,10 +328,9 @@ void loanBook(Book books[], int bookSize, User users[], int userSize, BookHistor
 }
 
 // Função para calcular multa.
-float calculateFine(time_t currentDate, time_t returnDate) {
+float calculateFine(time_t currentDate, time_t returnDate, float finePerDay) {
 
     const int secondsInDay = 60 * 60 * 24;
-    const float finePerDay = 1.50;
 
     int daysLate = (currentDate - returnDate) / secondsInDay;
 
@@ -369,7 +342,7 @@ float calculateFine(time_t currentDate, time_t returnDate) {
 }
 
 // Função para devolução do livro.
-void returnBook(Book books[], int bookSize, User users[], int userSize, BookHistory bookHistories[], int historySize, time_t currentDate, Fine fines[], int fineSize){
+void returnBook(Book books[], int bookSize, User users[], int userSize, BookHistory bookHistories[], int historySize, time_t currentDate, Fine fines[], int fineSize, float finePerDay){
     int bookId, userId;
     cout << "Informe o código de identificação do livro: ";
     cin >> bookId;
@@ -398,7 +371,7 @@ void returnBook(Book books[], int bookSize, User users[], int userSize, BookHist
                 }
             }
 
-            float fine = calculateFine(currentDate, bookHistories[i].returnDate);
+            float fine = calculateFine(currentDate, bookHistories[i].returnDate, finePerDay);
 
             if(fine > 0.0){
 
@@ -464,14 +437,14 @@ void listBookHistory(BookHistory bookHistories[], int historySize){
 
 // Função para encontrar livro por usuário.
 void findBookPerUser(BookHistory bookHistories[], int historySize, User users[], int userSize){
-    string user;
-    cout << "Digite o nome de usuário: ";
-    cin >> user;
+    int id;
+    cout << "Digite o ID do usuário: ";
+    cin >> id;
     bool foundBook = false;
     bool foundUser = false;
     
     for(int i=0; i<userSize; i++){
-        if(users[i].name == user){
+        if(users[i].id == id){
             foundUser = true;
         }
     }
@@ -479,14 +452,16 @@ void findBookPerUser(BookHistory bookHistories[], int historySize, User users[],
     if(!foundUser){
         cout << "Usuário não encontrado." << endl;
     } else {
-        cout << "Livros atualmente emprestados para o usuário " << user << ":" << endl;
+            cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
+            cout << "        EMPRESTIMOS POR USUÁRIO "  << endl;
+            cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
         for(int i=0; i<historySize; i++){
-            if(bookHistories[i].renter.name == user && bookHistories[i].returned == false){
+            if(bookHistories[i].renter.id == id && bookHistories[i].returned == false){
                 foundBook = true;
                 cout << "Livro: " << bookHistories[i].book.title << " (" << bookHistories[i].book.id << ")" << endl;
                 cout << "Data de devolução: ";
                 printDate(bookHistories[i].returnDate);
-                cout << endl;
+                cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
             }
 
             if(!foundBook){
@@ -508,7 +483,7 @@ void listFines(Fine fines[], int fineSize){
         if(!fines[i].user.name.empty()){
             cout << "Id. da Multa: " << fines[i].id << endl;
             cout << "Usuário Autuado: " << fines[i].user.name << endl;
-            cout << "Fator gerador: " << fines[i].rent.book.title << endl;
+            cout << "Fato gerador: " << fines[i].rent.book.title << endl;
             cout << "Valor: R$" << fines[i].value << endl;
             cout << "Status: ";
             if(fines[i].paid){
@@ -525,13 +500,13 @@ void listFines(Fine fines[], int fineSize){
 
 // Função para listar as multas por usuários
 void listFinesPerUser(Fine fines[], int fineSize, User users[], int userSize){
-    string user;
-    cout << "Digite o nome de usuário: ";
-    cin >> user;
+    int id;
+    cout << "Digite o ID do usuário: ";
+    cin >> id;
     bool foundUser = false;
     
     for(int i=0; i<userSize; i++){
-        if(users[i].name == user){
+        if(users[i].id == id){
             foundUser = true;
             break;
         }
@@ -541,14 +516,14 @@ void listFinesPerUser(Fine fines[], int fineSize, User users[], int userSize){
         cout << "Usuário não encontrado." << endl;
     } else {
             cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
-            cout << "      MULTAS DE " << user << endl;
+            cout << "        MULTAS POR USUÁRIO "  << endl;
             cout << "-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=" << endl;
             bool found = false;
             for(int i=0; i <fineSize; i++){
-                if(fines[i].user.name == user && !fines[i].user.name.empty()){
+                if(fines[i].user.id == id && !fines[i].user.name.empty()){
                     found = true;
                     cout << "Id. da Multa: " << fines[i].id << endl;
-                    cout << "Fator gerador: " << fines[i].rent.book.title << endl;
+                    cout << "Fato gerador: " << fines[i].rent.book.title << endl;
                     cout << "Valor: R$" << fines[i].value << endl;
                     cout << "Status: ";
                     if(fines[i].paid){
@@ -560,7 +535,7 @@ void listFinesPerUser(Fine fines[], int fineSize, User users[], int userSize){
                 }
         
                 if(!found){
-                    cout << "Usuário não possui multas.";
+                    cout << "Usuário não possui multas." << endl;
                     break;
                 }
         
@@ -577,11 +552,11 @@ void finesPayment(Fine fines[], int fineSize){
     cin >> id;
     bool found = false;
     for(int i = 0; i<fineSize; i++){
-        if(fines[i].id == id && !fines[i].paid){ // Corrigir a comparação com o id e com o status de pagamento
+        if(fines[i].id == id && !fines[i].paid){
             fines[i].paid = true;
             found = true;
             cout << "Baixa realizada com sucesso." << endl;
-            break; // Adicionar um break para sair do loop após encontrar a multa
+            break;
         }
     }
 

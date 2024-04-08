@@ -65,10 +65,10 @@ void listUsers(User users[], int userSize);
 void loanBook(Book books[], int bookSize, User users[], int userSize, BookHistory bookHistories[], int historySize, time_t currentDate);
 
 // Função para calcular multa.
-float calculateFine(time_t currentDate, time_t returnDate);
+float calculateFine(time_t currentDate, time_t returnDate, float finePerDay = 1.50);
 
 // Função para devolução do livro.
-void returnBook(Book books[], int size, User users[], int userSize, BookHistory bookHistories[], int historySize, time_t currentDate, Fine fines[], int fineSize);
+void returnBook(Book books[], int size, User users[], int userSize, BookHistory bookHistories[], int historySize, time_t currentDate, Fine fines[], int fineSize, float finePerDay = 1.50);
 
 // Função para listar todos os emprestimos.
 void listBookHistory(BookHistory bookHistories[], int historySize);

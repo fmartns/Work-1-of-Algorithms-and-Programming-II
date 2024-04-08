@@ -4,6 +4,10 @@
 using namespace std;
 
 int main() {
+    
+    // Definir valor da multa por dia de atraso.
+    float finePerDay = 1.50;
+    
     const int MAX_BOOKS = 1000;
     const int MAX_USERS = 1000;
     const int MAX_HISTORY = 1000;
@@ -146,7 +150,7 @@ int main() {
                         loanBook(books, MAX_BOOKS, users, MAX_USERS, bookHistories, MAX_HISTORY, time(nullptr));
                         break;
                     case 2:
-                        returnBook(books, MAX_BOOKS, users, MAX_USERS, bookHistories, MAX_HISTORY, time(nullptr), fines, MAX_FINE);
+                        returnBook(books, MAX_BOOKS, users, MAX_USERS, bookHistories, MAX_HISTORY, time(nullptr), fines, MAX_FINE, finePerDay);
                         break;
                     case 3:
                         listBookHistory(bookHistories, MAX_HISTORY);
