@@ -5,7 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <unordered_map>
-#include <limits> // Adicione esta linha para usar numeric_limits
+#include <limits>
 
 using namespace std;
 
